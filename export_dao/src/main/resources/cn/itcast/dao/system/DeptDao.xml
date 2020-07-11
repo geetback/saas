@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.dao.system.DeptDao">
+    <insert id="save">
+        insert into pe_dept
+        (
+        dept_id,
+        dept_name,
+        <if test="parent.id!=null and parent.id != ''">
+            parent_id,
+        </if>
+        state,
+        company_id,
+        company_name
+        ) values (
+        #{id},
+        #{deptName},
+        <if test="parent.id!=null and parent.id != ''">
+            #{parent.id},
+        </if>
+        #{state},
+        #{companyId},
+        #{companyName}
+        )
+    </insert>
+    <update id="update">
+        update pe_dept SET
+        dept_name = #{deptName},
+        <if test="parent.id!=null and parent.id != ''">
+            parent_id = #{parent.id},
+        </if>
+        state = #{state},
+        company_id = #{companyId},
+        company_name = #{companyName}
+        where dept_id = #{id}
+    </update>
+    <update id="updateParentIsNull4Delete">
+        update pe_dept set parent_id = null where parent_id = #{id}
+    </update>
+    <delete id="deleteById">
+        delete from pe_dept where dept_id = #{id}
+    </delete>
+
+    <resultMap id="BaseResultMap" type="cn.itcast.domain.system.Dept">
+        <id property="id" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="state" column="state"/>
+        <result property="companyId" column="company_id"/>
+        <result property="companyName" column="company_name"/>
+        <association property="parent" column="parent_id" javaType="cn.itcast.domain.system.Dept" select="cn.itcast.dao.system.DeptDao.findById"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from pe_dept
+    </select>
+    <select id="findById" resultMap="BaseResultMap">
+        select * from pe_dept where dept_id = #{id}
+    </select>
+</mapper>

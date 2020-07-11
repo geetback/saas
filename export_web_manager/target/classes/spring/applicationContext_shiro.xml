@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <description>Shiro与Spring整合</description>
+    <!--缓存相关-->
+    <!--<bean id="redisManager" class="org.crazycake.shiro.RedisManager">
+         <property name="host" value="127.0.0.1:6379"></property>
+     </bean>
+
+     <bean id="cacheManager" class="org.crazycake.shiro.RedisCacheManager">
+         <property name="redisManager" ref="redisManager"></property>
+     </bean>-->
+
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"></bean>
+
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+
+        <property name="realm" ref="authRealm"/>
+
+        <property name="cacheManager" ref="cacheManager"></property>
+    </bean>
+
+
+
+    <bean id="authRealm" class="cn.itcast.web.shiro.AuthRealm">
+
+        <property name="credentialsMatcher" ref="customerCredentialsMatcher"></property>
+    </bean>
+
+
+    <bean id="customerCredentialsMatcher" class="cn.itcast.web.shiro.CustomCredentialsMatcher"></bean>
+
+
+    <bean id="myPermsShiroFilter" class="cn.itcast.web.shiro.MyPermsShiroFilter"/>
+
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login.jsp"></property>
+        <property name="unauthorizedUrl" value="/unauthorized.jsp"></property>
+
+        <property name="filters">
+            <map>
+                <entry key="myperms" value-ref="myPermsShiroFilter"/>
+            </map>
+        </property>
+
+        <property name="filterChainDefinitions">
+            <value>
+                <!--
+                    访问此链接的时候需要拥有的权限集合
+                    /system/dept/list.do = perms["部门管理"]
+                -->
+                /system/dept/list.do = myperms["部门管理","删除部门"]
+                /index.jsp* = anon
+                /login.jsp* = anon
+                /login* = anon
+                /logout* = logout
+                /css/** = anon
+                /img/** = anon
+                /plugins/** = anon
+                /make/** = anon
+                /** = authc
+            </value>
+        </property>
+    </bean>
+
+
+
+</beans>
