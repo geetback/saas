@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!--开启组件扫描-->
+    <context:component-scan base-package="cn.itcast.web"/>
+    <!--开启mvc注解支持-->
+    <mvc:annotation-driven/>
+    <!--视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--dubbo配置-->
+    <!--注册中心-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <!--应用名称-->
+    <dubbo:application name="export_portal"/>
+    <!--注解支持-->
+    <dubbo:annotation package="cn.itcast.web"/>
+    <!--其他配置-->
+    <dubbo:consumer check="false" timeout="3000" retries="0"/>
+
+
+</beans>

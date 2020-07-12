@@ -1,8 +1,9 @@
 package cn.itcast.domain.company;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Company {
+public class Company implements Serializable {
     private String id;
     private String name;
     private Date expirationDate;
