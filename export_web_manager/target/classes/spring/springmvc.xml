@@ -2,24 +2,40 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-    <context:component-scan base-package="cn.itcast.web"></context:component-scan>
-    <!--开启注解支持-->
-    <mvc:annotation-driven></mvc:annotation-driven>
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!--开启组件扫描-->
+    <context:component-scan base-package="cn.itcast.web"/>
+
     <!--自定义日期转换器-->
-    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <bean id="conversionService2" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <list>
                 <bean class="cn.itcast.web.handler.MyString2DateConverter"/>
             </list>
         </property>
-
     </bean>
+
+    <!--开启mvc注解支持-->
+    <mvc:annotation-driven conversion-service="conversionService2"/>
     <!--视图解析器-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/pages/"></property>
-        <property name="suffix" value=".jsp"></property>
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!--开启aop的自动代理-->
+    <aop:aspectj-autoproxy/>
+
+    <!--dubbo-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <dubbo:application name="export_web_manager"/>
+    <dubbo:annotation package="cn.itcast.web"/>
+    <dubbo:consumer check="false" timeout="3000" retries="0"/>
 </beans>

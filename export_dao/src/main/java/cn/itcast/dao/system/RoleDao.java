@@ -16,7 +16,7 @@ public interface RoleDao {
 
     void delete(String id);
 
-    void saveRoleModule(@Param("roleId") String roleid, @Param("moduleId") String moduleId);
+    void saveRoleModule( @Param("roleId")String roleid,  @Param("moduleId")String moduleId);
 
     void deleteModulesByRoleId(String roleid);
 }

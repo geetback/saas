@@ -19,6 +19,8 @@
         <module>export_portal</module>
         <module>export_company_interface</module>
         <module>export_company_service</module>
+        <module>export_cargo_interface</module>
+        <module>export_cargo_service</module>
     </modules>
     <packaging>pom</packaging>
     <!-- 集中定义依赖版本号 -->
