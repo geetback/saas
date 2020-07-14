@@ -40,9 +40,9 @@
         <div class="panel panel-default">
             <div class="panel-heading">新增货物</div>
             <%--
-
+                enctype="multipart/form-data"
             --%>
-            <form id="editForm" action="${ctx}/cargo/contractProduct/edit.do" method="post"  enctype="multipart/form-data" >
+            <form id="editForm" action="${ctx}/cargo/contractProduct/edit.do" method="post"  enctype="multipart/form-data"  >
                 <input type="text" name="contractId" value="${contractId}">
                 <input type="text" name="factoryName" id="factoryName" value="${contractProduct.factoryName}">
                 <div class="row data-type" style="margin: 0px">
