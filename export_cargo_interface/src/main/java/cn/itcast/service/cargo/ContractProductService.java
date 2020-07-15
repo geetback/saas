@@ -5,6 +5,8 @@ import cn.itcast.domain.cargo.ContractProduct;
 import cn.itcast.domain.cargo.ContractProductExample;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 /**
  * 业务层接口
  */
@@ -34,4 +36,6 @@ public interface ContractProductService {
 	 * 分页查询
 	 */
 	PageInfo findAll(int page, int size,ContractProductExample example);
+
+    void batchSave(List<ContractProduct> list);
 }

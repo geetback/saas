@@ -2,6 +2,7 @@ package cn.itcast.web.controller.cargo;
 
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
+import cn.itcast.domain.system.User;
 import cn.itcast.service.cargo.ContractService;
 import cn.itcast.web.controller.BaseController;
 import com.github.pagehelper.PageInfo;
@@ -22,6 +23,14 @@ public class ContractController extends BaseController {
         ContractExample contractExample=new ContractExample();
         ContractExample.Criteria criteria = contractExample.createCriteria();
         criteria.andCompanyIdEqualTo(getCompanyId());
+        User loginUser = getLoginUser();
+        if (loginUser.getDegree() == 4) {
+            //普通员工,根据创建者id查询
+            criteria.andCreateByEqualTo(loginUser.getId());
+        }else if(loginUser.getDegree() == 3){
+            //管理,根据部门的id查询
+            criteria.andCreateDeptEqualTo(loginUser.getDeptId());
+        }
         //排序
         contractExample.setOrderByClause("create_time desc");
         //查询操作

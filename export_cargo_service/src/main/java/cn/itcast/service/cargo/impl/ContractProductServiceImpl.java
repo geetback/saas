@@ -12,6 +12,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 @Service
 public class ContractProductServiceImpl implements ContractProductService {
     @Autowired
@@ -81,5 +83,14 @@ public class ContractProductServiceImpl implements ContractProductService {
     public PageInfo findAll(int page, int size, ContractProductExample example) {
         PageHelper.startPage(page,size);
         return new PageInfo(contractProductDao.selectByExample(example));
+    }
+
+    @Override
+    public void batchSave(List<ContractProduct> list) {
+        if (list!=null && list.size()>0) {
+            for (ContractProduct contractProduct : list) {
+                save(contractProduct);
+            }
+        }
     }
 }

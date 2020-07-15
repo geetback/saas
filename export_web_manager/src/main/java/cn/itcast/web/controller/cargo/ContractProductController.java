@@ -11,12 +11,15 @@ import cn.itcast.web.controller.BaseController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -82,5 +85,57 @@ public class ContractProductController extends BaseController {
     public String deleteById(String id,String contractId){
         contractProductService.deleteById(id);
         return "redirect:/cargo/contractProduct/list.do?contractId="+contractId;
+    }
+    @RequestMapping(value = "toImport",name = "跳转到批量上传货物页面")
+    public String toImport(String contractId){
+        request.setAttribute("contractId",contractId);
+        return "cargo/product/product-import";
+    }
+
+
+    @RequestMapping(value = "import",name = "批量上传货物")
+    public String batchSave(String contractId,MultipartFile file) throws IOException {
+        Workbook wk = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = wk.getSheetAt(0);
+        List<ContractProduct> list = new ArrayList<>();
+        for (int i = 1; i < sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            Object[] arr = new Object[10];
+
+            for (int j = 1; j <  row.getLastCellNum(); j++) {
+                Cell cell = row.getCell(j);
+                arr[j] = getCellValue(cell);
+            }
+
+            ContractProduct contractProduct = new ContractProduct(arr,getCompanyId(),getCompanyName());
+            contractProduct.setContractId(contractId);
+            list.add(contractProduct);
+        }
+        contractProductService.batchSave(list);
+        return "redirect:/cargo/contractProduct/list.do?contractId="+contractId;
+    }
+    private static Object getCellValue(Cell cell) {
+        Object obj = null;
+
+        CellType cellType = cell.getCellType();
+
+        switch (cellType) {
+            case STRING:
+                obj = cell.getStringCellValue();
+                break;
+            case BOOLEAN:
+                obj = cell.getBooleanCellValue();
+                break;
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    obj = cell.getDateCellValue();
+                } else {
+                    obj = cell.getNumericCellValue();
+                }
+                break;
+            default:
+                obj = cell.getStringCellValue();
+        }
+        return obj;
     }
 }
