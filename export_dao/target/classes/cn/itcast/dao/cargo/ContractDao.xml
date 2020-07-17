@@ -88,6 +88,16 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
       select <include refid="Base_Column_List" /> from co_contract where id = #{id,jdbcType=VARCHAR}
     </select>
+    <select id="findByShipTime" resultType="cn.itcast.domain.cargo.ContractProductVo">
+        SELECT c.custom_name customName,c.contract_no contractNo,
+          cp.product_no productNo,cp.cnumber cnumber,
+          cp.factory_name factoryName,c.delivery_period deliveryPeriod,
+          c.ship_time shipTime,c.trade_terms tradeTerms
+        FROM co_contract c
+        LEFT JOIN co_contract_product cp
+            ON c.id = cp.contract_id
+        WHERE DATE_FORMAT(ship_time,'%Y-%m')=#{shipTime} AND c.company_id = #{companyId} ORDER BY c.ship_time ASC;
+    </select>
 
     <!--根据id删除-->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

@@ -2,8 +2,10 @@ package cn.itcast.service.cargo;
 
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
+import cn.itcast.domain.cargo.ContractProductVo;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -23,4 +25,6 @@ public interface ContractService {
 
     //分页查询
 	PageInfo findAll(int page, int size,ContractExample example);
+    //根据船期查询合同和货物的信息
+    List<ContractProductVo> findByShipTime(String shipTime, String companyId);
 }

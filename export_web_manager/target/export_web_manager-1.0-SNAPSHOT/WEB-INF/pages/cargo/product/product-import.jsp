@@ -37,7 +37,7 @@
 
         <div class="callout callout-info">
             <h4>重要提示</h4>
-            推荐<a>下载模板文件</a>，填写后上传
+            推荐<a href="${ctx}/make/demo.xlsx">下载模板文件</a>，填写后上传
         </div>
 
         <!--订单信息-->

@@ -3,6 +3,7 @@ package cn.itcast.service.cargo.impl;
 import cn.itcast.dao.cargo.ContractDao;
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
+import cn.itcast.domain.cargo.ContractProductVo;
 import cn.itcast.service.cargo.ContractService;
 import cn.itcast.utils.UUIDUtils;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -11,6 +12,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ContractServiceImpl implements ContractService{
@@ -51,5 +53,9 @@ public class ContractServiceImpl implements ContractService{
     public PageInfo findAll(int page, int size, ContractExample example) {
         PageHelper.startPage(page,size);
         return new PageInfo(contractDao.selectByExample(example));
+    }
+    @Override
+    public List<ContractProductVo> findByShipTime(String shipTime, String companyId) {
+        return contractDao.findByShipTime(shipTime,companyId);
     }
 }
