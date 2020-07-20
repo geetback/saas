@@ -1,6 +1,9 @@
 package cn.itcast.web.controller.cargo;
 
 import cn.itcast.domain.cargo.*;
+import cn.itcast.domain.vo.ExportProductVo;
+import cn.itcast.domain.vo.ExportResult;
+import cn.itcast.domain.vo.ExportVo;
 import cn.itcast.service.cargo.ContractService;
 import cn.itcast.service.cargo.ExportProductService;
 import cn.itcast.service.cargo.ExportService;
@@ -8,11 +11,14 @@ import cn.itcast.web.controller.BaseController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -86,5 +92,62 @@ public class ExportController extends BaseController {
 
         return "cargo/export/export-update";
 
+    }
+    @RequestMapping(value = "submit",name = "提交报运单")
+    public String submit(String id){
+        Export export = new Export();
+        export.setId(id);
+        export.setState(1);
+
+        exportService.update(export);
+
+        return "redirect:/cargo/export/list.do";
+    }
+
+
+    @RequestMapping(value = "cancel",name = "取消报运单")
+    public String cancel(String id){
+        Export export = new Export();
+        export.setId(id);
+        export.setState(0);
+
+        exportService.update(export);
+
+        return "redirect:/cargo/export/list.do";
+    }
+    @RequestMapping(value = "exportE",name = "海关电子报运")
+    public String exportE(String id){
+    
+        Export export = exportService.findById(id);
+        ExportVo exportVo = new ExportVo();
+        BeanUtils.copyProperties(export,exportVo);
+
+        exportVo.setExportId(id);
+
+        ExportProductExample exportProductExample = new ExportProductExample();
+        ExportProductExample.Criteria criteria = exportProductExample.createCriteria();
+        criteria.andExportIdEqualTo(id);
+        List<ExportProduct> list = exportProductService.findAll(exportProductExample);
+
+        List<ExportProductVo> exportProductVoList = new ArrayList<>();
+
+        if (list!=null&&list.size()>0) {
+            for (ExportProduct ep : list) {
+                ExportProductVo epvo = new ExportProductVo();
+                BeanUtils.copyProperties(ep,epvo);
+                epvo.setExportProductId(ep.getId());
+                exportProductVoList.add(epvo);
+            }
+        }
+        exportVo.setProducts(exportProductVoList);
+
+        WebClient webClient = WebClient.create("http://localhost:9999/ws/export/user");
+        webClient.post(exportVo);
+
+        webClient = WebClient.create("http://localhost:9999/ws/export/user/"+id);
+        ExportResult exportResult = webClient.get(ExportResult.class);
+        exportService.updateByExportResult(exportResult);
+
+        return "redirect:/cargo/export/list.do";
     }
 }

@@ -42,4 +42,6 @@
     <dubbo:application name="export_web_manager"/>
     <dubbo:annotation package="cn.itcast.web"/>
     <dubbo:consumer check="false" timeout="3000" retries="0"/>
+    <!--引入quartz的配置文件-->
+    <import resource="classpath:spring/quartz.xml"/>
 </beans>

@@ -2,6 +2,8 @@ package cn.itcast.service.cargo.impl;
 
 import cn.itcast.dao.cargo.*;
 import cn.itcast.domain.cargo.*;
+import cn.itcast.domain.vo.ExportProductResult;
+import cn.itcast.domain.vo.ExportResult;
 import cn.itcast.service.cargo.ExportService;
 import cn.itcast.utils.UUIDUtils;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ExportServiceImpl implements ExportService {
@@ -114,5 +117,24 @@ public class ExportServiceImpl implements ExportService {
     public PageInfo findAll(int page, int size, ExportExample example) {
         PageHelper.startPage(page, size);
         return new PageInfo(exportDao.selectByExample(example));
+    }
+
+    @Override
+    public void updateByExportResult(ExportResult exportResult) {
+        Export export = new Export();
+        export.setId(exportResult.getExportId());
+        export.setState(exportResult.getState());
+        export.setRemark(exportResult.getRemark());
+        exportDao.updateByPrimaryKeySelective(export);
+
+        Set<ExportProductResult> products = exportResult.getProducts();
+        if (products!=null && products.size()>0) {
+            for (ExportProductResult product : products) {
+                ExportProduct exportProduct = new ExportProduct();
+                exportProduct.setId(product.getExportProductId());
+                exportProduct.setTax(product.getTax());
+                exportProductDao.updateByPrimaryKeySelective(exportProduct);
+            }
+        }
     }
 }

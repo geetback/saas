@@ -2,6 +2,7 @@ package cn.itcast.service.cargo;
 
 import cn.itcast.domain.cargo.Export;
 import cn.itcast.domain.cargo.ExportExample;
+import cn.itcast.domain.vo.ExportResult;
 import com.github.pagehelper.PageInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,4 +19,6 @@ public interface ExportService {
     void delete(String id);
 
     PageInfo findAll(int page, int size, ExportExample example);
+
+    void updateByExportResult(ExportResult exportResult);
 }
