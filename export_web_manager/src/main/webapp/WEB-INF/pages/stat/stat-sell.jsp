@@ -20,7 +20,7 @@
     <section class="content-header">
         <h1>
             统计分析
-            <small>厂家销量统计</small>
+            <small>商品销售top10</small>
         </h1>
     </section>
     <section class="content">
@@ -31,42 +31,46 @@
 </div>
 </body>
 
-<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
-<script src="../../plugins/echarts/echarts.min.js"></script>
+<script src="${ctx}/plugins/echarts/echarts.min.js"></script>
 <script type="text/javascript">
-    $.get("/stat/getSellData.do",function(data) {
+    $.ajax({
+        url:"${ctx}/stat/getProductData.do",
+        success:function (resp) {
+            var nameArr=[];
+            var valueArr=[];
 
-        var titles = [];
-        var values = [];
-        for(var i=0;i<data.length;i++) {
-            titles[i] = data[i].name;
-            values[i] = data[i].value;
+            //遍历json数组,获取到商品名字
+            for(var i=0;i<resp.length;i++){
+                nameArr[i]=resp[i].name;
+                valueArr[i]=resp[i].value;
+            }
+
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // 指定图表的配置项和数据
+            option = {
+                xAxis: {
+                    type: 'category',
+                    data: nameArr,
+                    axisLabel: {
+                        interval:0,
+                        rotate:40
+                    }
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: valueArr,
+                    type: 'bar'
+                }]
+            };
+
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
         }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
-
-        // 指定图表的配置项和数据
-        option = {
-            xAxis: {
-                type: 'category',
-                data: titles,
-                axisLabel: {
-                    rotate:70
-                }
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [{
-                data: values,
-                type: 'bar'
-            }]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
     })
 </script>
-
 </html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.dao.stat.StatDao">
+    <select id="getFactoryData" resultType="java.util.Map">
+        SELECT factory_name name,COUNT(1) value
+        FROM co_contract_product
+        WHERE company_id = #{companyId}
+        GROUP BY factory_name
+        ORDER BY value DESC;
+    </select>
+
+
+    <select id="getProductData" resultType="java.util.Map">
+        SELECT product_no name ,SUM(cnumber) value
+        FROM co_contract_product
+        WHERE company_id =  #{companyId}
+        GROUP BY product_no
+        ORDER BY value DESC
+        LIMIT 10;
+    </select>
+
+
+    <select id="getOnLineData" resultType="java.util.Map">
+        SELECT oi.a1 name,IFNULL(tmp.value,0) value
+        FROM st_online_info oi
+        LEFT JOIN (
+            SELECT DATE_FORMAT(time,'%H') name,COUNT(1) value
+            FROM st_sys_log
+            WHERE company_id = #{companyId}
+            GROUP BY DATE_FORMAT(time,'%H')
+            ) tmp
+            ON oi.a1 = tmp.name
+    </select>
+</mapper>

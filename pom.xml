@@ -21,6 +21,9 @@
         <module>export_company_service</module>
         <module>export_cargo_interface</module>
         <module>export_cargo_service</module>
+        <module>export_statservice</module>
+        <module>export_stat_service</module>
+        <module>export_stat_interface</module>
     </modules>
     <packaging>pom</packaging>
     <!-- 集中定义依赖版本号 -->
